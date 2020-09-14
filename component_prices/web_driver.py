@@ -1,6 +1,7 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import csv
+from selenium.webdriver.chrome.options import Options
+
 
 chrome_options = Options()
 # chrome_options.add_argument("--disable-extensions")
@@ -14,13 +15,16 @@ evetech = webdriver.Chrome(options=chrome_options)
 evetech.get("https://www.evetech.co.za/PC-Components/buy-solid-state-drives-83.aspx")
 print('=====Running Evetech in headless mode=====')
 
-product_names = [name.text for name in evetech.find_elements_by_class_name('myProductName')]
-prices = [price.text for price in evetech.find_elements_by_class_name('price')]
-links = [link.get_attribute('href') for link in evetech.find_elements_by_link_text('More Info')]
+eve_product_names = [name.text for name in evetech.find_elements_by_class_name('myProductName')]
+eve_prices = [price.text for price in evetech.find_elements_by_class_name('price')]
+eve_status = [s.text for s in evetech.find_elements_by_class_name('statuslbl_In')]
+eve_links = [link.get_attribute('href') for link in evetech.find_elements_by_link_text('More Info')]
+
 print("=====Finished Evetech Collection=====")
 print('=========Now writing to file=========')
 
-products = sorted(zip(product_names, prices, links))
+products = sorted(zip(eve_product_names, eve_prices, eve_status, eve_links))
+
 
 with open('SSD.csv', "w", newline='') as the_file:
     csv.register_dialect("custom", delimiter=",")
@@ -28,7 +32,7 @@ with open('SSD.csv', "w", newline='') as the_file:
     for item in products:
         writer.writerow(item)
 print("=====Writing to file complete=====")
-        
+
 wootware = webdriver.Chrome(options=chrome_options)
 
 wootware.get("https://www.wootware.co.za/computer-hardware/hard-drives-ssds/solid-state-disks/shopby"
@@ -53,7 +57,7 @@ with open('SSD.csv', "a+", newline='') as the_file:
     for item in woot_products:
         writer.writerow(item)
 
-for item in woot_products:
-    print(item)
+
 evetech.close()
 wootware.close()
+
